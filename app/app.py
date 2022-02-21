@@ -91,12 +91,12 @@ if __name__ == '__main__':
                 "state_topic": "homeassistant/sensor/new_dht_humidity/state",
                 "retain": "true"
                 }
-    
-    client.publish("homeassistant/sensor/new_dht_temperature/config", json.dumps(temp_data_conf))
-    client.publish("homeassistant/sensor/new_dht_humidity/config", json.dumps(hum_data_conf))
 
     while True:
         try:
+            
+            client.publish("homeassistant/sensor/new_dht_temperature/config", json.dumps(temp_data_conf))
+            client.publish("homeassistant/sensor/new_dht_humidity/config", json.dumps(hum_data_conf))
 
             humidity, temperature = adafruit_dht.read_retry(dht_sensor, SENSOR_PIN)
 
