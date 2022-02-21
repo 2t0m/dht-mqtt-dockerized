@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+    dht-mqtt-dockerized:
+        build: .
+        container_name: dht-mqtt-dockerized
+        restart: unless-stopped
+        network_mode: host
+        privileged: true
+        environment:
+            SENSOR_PIN: '17'
+            SENSOR_TYPE: 'dht22'
+            SENSOR_CHECK_INTERVAL: '60'
+            SENSOR_DECIMAL_DIGITS: '4'
+            TEMP_DELTA: -1.2
+            MQTT_HOSTNAME: localhost
+            MQTT_PORT: 1883
+            MQTT_TIMEOUT: 60
+            MQTT_CLIENT_ID: 'dht22-mqtt'
+            CLIENT_CLEAN_SESSION: 'False'
+            CLIENT_TLS_INSECURE: 'False'
+            MQTT_CLIENT_QOS: '4'
+            MQTT_USERNAME: ''
+            MQTT_PASSWORD: ''
+            LOG_LEVEL: 'info'
