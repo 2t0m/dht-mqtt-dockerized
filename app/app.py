@@ -10,6 +10,7 @@ SENSOR_TYPE = os.getenv("SENSOR_TYPE", "DHT22").upper()
 SENSOR_PIN = int(os.getenv('SENSOR_PIN', '4'))
 SENSOR_CHECK_INTERVAL = int(os.getenv('SENSOR_CHECK_INTERVAL', 30))
 DECIMAL_POINTS = int(os.getenv("SENSOR_DECIMAL_POINTS", 2))
+TEMP_DELTA = os.getenv('TEMP_DELTA', 0)
 
 MQTT_HOSTNAME = os.getenv("MQTT_HOSTNAME", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
@@ -79,14 +80,16 @@ if __name__ == '__main__':
                 "name": "DHT Temperature", "state_class": "measurement",
                 "unique_id":"new_dht_temperature", "object_id":"new_dht_temperature",
                 "unit_of_measurement": "°C", "device_class": "temperature",
-                "state_topic": "homeassistant/sensor/new_dht_temperature/state"
+                "state_topic": "homeassistant/sensor/new_dht_temperature/state",
+                "retain": "true"
                 }
     
     hum_data_conf = {
                 "name": "DHT Humidity", "state_class": "measurement",
                 "unique_id":"new_dht_humidity", "object_id":"new_dht_humidity",
                 "unit_of_measurement": "%", "device_class": "humidity",
-                "state_topic": "homeassistant/sensor/new_dht_humidity/state"
+                "state_topic": "homeassistant/sensor/new_dht_humidity/state",
+                "retain": "true"
                 }
     
     client.publish("homeassistant/sensor/new_dht_temperature/config", json.dumps(temp_data_conf))
@@ -100,7 +103,7 @@ if __name__ == '__main__':
             if humidity is not None and temperature is not None:
 
                 logging.debug(f"Sensor values measured - temperature '{temperature}', humidity '{humidity}''")
-                temp_data = round(temperature, DECIMAL_POINTS)
+                temp_data = round((temperature+float(TEMP_DELTA)), DECIMAL_POINTS)
                 hum_data = round(humidity, DECIMAL_POINTS)
                 
                 logging.debug("Publishing data to topics")
