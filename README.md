@@ -11,61 +11,35 @@ If you already have everything setup, continue to the next section.
 
 ## Running docker container
 
-### As a standalone container
-See the available configurations for the command in the `Available variables` section below and run the command:
-
-```
-docker run \
-    --name dht-mqtt-dockerized \
-    --restart=unless-stopped \
-    --net=host \
-    --privileged \
-    -e SENSOR_PIN=14 \
-    -e SENSOR_TYPE='dht22' \
-    -e SENSOR_CHECK_INTERVAL=60 \
-    -e SENSOR_DECIMAL_DIGITS=4 \
-    -e MQTT_HOSTNAME=localhost \
-    -e MQTT_PORT=1883 \
-    -e MQTT_TIMEOUT=60 \
-    -e MQTT_TOPIC='sensor/value'
-    -e MQTT_CLIENT_ID='dht-mqtt' \
-    -e CLIENT_CLEAN_SESSION='False' \
-    -e CLIENT_TLS_INSECURE='False' \
-    -e MQTT_CLIENT_QOS='4'
-    -e MQTT_USERNAME=''
-    -e MQTT_PASSWORD=''
-    -e LOG_LEVEL='info'
-    tomasgrigaliunas/dht-mqtt-dockerized
-```
-
-
 ### Using docker-compose
 Requires docker-compose to be [installed on your Raspberry Pi](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl).
 
 Set a available configuration for the command in the `Available variables` section below and add the following to your `docker-compose.yml` file and run the `docker-compose up -d` command.
 ```
-dht-mqtt-dockerized:
-    image: tomasgrigaliunas/dht-mqtt-dockerized
-    container_name: dht-mqtt-dockerized
-    restart: unless-stopped
-    network_mode: host
-    privileged: true
-    environment:
-        SENSOR_PIN: '14'
-        SENSOR_TYPE: 'dht22'
-        SENSOR_CHECK_INTERVAL: '60'
-        SENSOR_DECIMAL_DIGITS: '4'
-        MQTT_HOSTNAME: localhost
-        MQTT_PORT: 1883
-        MQTT_TIMEOUT: 60
-        MQTT_TOPIC: 'sensor/value'
-        MQTT_CLIENT_ID: 'dht22-mqtt'
-        CLIENT_CLEAN_SESSION: 'False'
-        CLIENT_TLS_INSECURE: 'False'
-        MQTT_CLIENT_QOS: '4'
-        MQTT_USERNAME: ''
-        MQTT_PASSWORD: ''
-        LOG_LEVEL: 'info'
+version: '3.3'
+services:
+    dht-mqtt-dockerized:
+        build: .
+        container_name: dht-mqtt-dockerized
+        restart: unless-stopped
+        network_mode: host
+        privileged: true
+        environment:
+            SENSOR_PIN: '17'
+            SENSOR_TYPE: 'dht22'
+            SENSOR_CHECK_INTERVAL: '60'
+            SENSOR_DECIMAL_DIGITS: '4'
+            TEMP_DELTA: -1.2
+            MQTT_HOSTNAME: localhost
+            MQTT_PORT: 1883
+            MQTT_TIMEOUT: 60
+            MQTT_CLIENT_ID: 'dht22-mqtt'
+            CLIENT_CLEAN_SESSION: 'False'
+            CLIENT_TLS_INSECURE: 'False'
+            MQTT_CLIENT_QOS: '4'
+            MQTT_USERNAME: ''
+            MQTT_PASSWORD: ''
+            LOG_LEVEL: 'info'
 ```
 
 ### Available variables
@@ -74,6 +48,7 @@ dht-mqtt-dockerized:
 - `SENSOR_TYPE` - refers to the DHT sensor type, available options are `DHT22` or `DHT11` (Default `DHT22`).
 - `SENSOR_CHECK_INTERVAL` - the frequency in seconds on how often the temperature/humidity is checked by the sensor and sent to the MQTT broker (Default: `30`).
 - `SENSOR_DECIMAL_DIGITS` - rounds the temperature/humidity values to the specified number (integer) of decimals (Default `2`).
+- `TEMP_DELTA` - temperature delta to add to the sensor temperature before publishing.
 - `MQTT_HOSTNAME` - the hostname or IP address of the MQTT broker to which the client should connect to, can be left empty if the broker is running on the same raspberry pi host (Default `localhost`).
 - `MQTT_PORT` - the network port of the MQTT broker (Default `1883`)
 - `MQTT_TIMEOUT` - maximum period in seconds allowed between communications with the broker (Default `60`)
