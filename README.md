@@ -1,1 +1,2 @@
-# dht-mqtt-dockerized for HomeAssistant
+# dht-mqtt-dockerized
+dht-mqtt-dockerized for HomeAssistant
