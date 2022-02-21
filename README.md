@@ -18,48 +18,27 @@ Set a available configuration for the command in the `Available variables` secti
 ```
 version: '3.3'
 services:
-    dht-mqtt-dockerized:
-        build: .
-        container_name: dht-mqtt-dockerized
-        restart: unless-stopped
-        network_mode: host
-        privileged: true
-        environment:
-            SENSOR_PIN: '17'
-            SENSOR_TYPE: 'dht22'
-            SENSOR_CHECK_INTERVAL: '60'
-            SENSOR_DECIMAL_DIGITS: '4'
-            TEMP_DELTA: -1.2
-            MQTT_HOSTNAME: localhost
-            MQTT_PORT: 1883
-            MQTT_TIMEOUT: 60
-            MQTT_CLIENT_ID: 'dht22-mqtt'
-            CLIENT_CLEAN_SESSION: 'False'
-            CLIENT_TLS_INSECURE: 'False'
-            MQTT_CLIENT_QOS: '4'
-            MQTT_USERNAME: ''
-            MQTT_PASSWORD: ''
-            LOG_LEVEL: 'info'
+  pir-mqtt:
+    build: .
+    image: pir-mqtt
+    container_name: pir-mqtt
+    privileged: true
+    restart: unless-stopped
+    environment:
+      GPIO_PIN: 7
+      SCAN_INTERVAL: 100
+      MQTT_HOST: localhost
+      MQTT_USER: ''
+      MQTT_PASS: ''
 ```
 
 ### Available variables
 
-- `SENSOR_PIN` - an integer for the Raspberry Pi pin to which the DHT Data pin is connected to (Default: `4`, refers to `GPIO4`).
-- `SENSOR_TYPE` - refers to the DHT sensor type, available options are `DHT22` or `DHT11` (Default `DHT22`).
-- `SENSOR_CHECK_INTERVAL` - the frequency in seconds on how often the temperature/humidity is checked by the sensor and sent to the MQTT broker (Default: `30`).
-- `SENSOR_DECIMAL_DIGITS` - rounds the temperature/humidity values to the specified number (integer) of decimals (Default `2`).
-- `TEMP_DELTA` - temperature delta to add to the sensor temperature before publishing.
-- `MQTT_HOSTNAME` - the hostname or IP address of the MQTT broker to which the client should connect to, can be left empty if the broker is running on the same raspberry pi host (Default `localhost`).
-- `MQTT_PORT` - the network port of the MQTT broker (Default `1883`)
-- `MQTT_TIMEOUT` - maximum period in seconds allowed between communications with the broker (Default `60`)
-- `MQTT_TOPIC` - the topic to which the temperature/humidity values in JSON should be published to (Default `sensor/value`).
-- `MQTT_CLIENT_ID` - the `CLIENT_ID` of the MQTT Client (Default `dht-sensor-mqtt`).
-- `CLIENT_CLEAN_SESSION` - defines whether the session is only stored in memory not persisted (Default `False`).
-- `CLIENT_TLS_INSECURE` - defines verification of the server hostname in the server certificate.(Default `False`).
-- `MQTT_CLIENT_QOS` - the quality of service level to use to publish with (Default `0`).
-- `MQTT_USERNAME` - Set a username for broker authentication (Default ``).
-- `MQTT_PASSWORD` - Set a password for broker authentication (Default ``).
-- `LOG_LEVEL` - Sets the verbosity of the logs publishd to the console, available options are `debug`, `info`, `warn`, `error` (Default `info`).
+- `GPIO_PIN` - an integer for the Raspberry Pi pin to which the PIR Data pin is connected to.
+- `SCAN_INTERVAL` - an integer in milliseconds.
+- `MQTT_HOST` - the hostname or IP address of the MQTT broker to which the client should connect to.
+- `MQTT_USER` - Set a username for broker authentication.
+- `MQTT_PASS` - Set a password for broker authentication.
 
 ## License
 Eclipse Public License 2.0
