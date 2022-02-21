@@ -10,8 +10,11 @@ SENSOR_TYPE = os.getenv("SENSOR_TYPE", "DHT22").upper()
 SENSOR_PIN = int(os.getenv('SENSOR_PIN', '4'))
 SENSOR_CHECK_INTERVAL = int(os.getenv('SENSOR_CHECK_INTERVAL', 30))
 DECIMAL_POINTS = int(os.getenv("SENSOR_DECIMAL_POINTS", 2))
-TEMP_DELTA = os.getenv('TEMP_DELTA', 0)
-
+TEMP_DELTA = float(os.getenv('TEMP_DELTA', 0))
+MQTT_TEMP_CONFIG = "homeassistant/sensor/new_dht_temperature/config";
+MQTT_TEMP_STATE = "homeassistant/sensor/new_dht_temperature/state";
+MQTT_HUM_CONFIG = "homeassistant/sensor/new_dht_humidity/config";
+MQTT_HUM_STATE = "homeassistant/sensor/new_dht_humidity/state";
 MQTT_HOSTNAME = os.getenv("MQTT_HOSTNAME", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_TIMEOUT = int(os.getenv("MQTT_TIMEOUT", 60))
@@ -75,12 +78,11 @@ if __name__ == '__main__':
     client.loop_start()
     logging.info("Successfully initialized application! Let's try to read the sensor...")
     
-    logging.info("Publishing homeassistant data configuration")
     temp_data_conf = {
                 "name": "DHT Temperature", "state_class": "measurement",
                 "unique_id":"new_dht_temperature", "object_id":"new_dht_temperature",
                 "unit_of_measurement": "°C", "device_class": "temperature",
-                "state_topic": "homeassistant/sensor/new_dht_temperature/state",
+                "state_topic": MQTT_TEMP_STATE,
                 "retain": "true"
                 }
     
@@ -88,27 +90,30 @@ if __name__ == '__main__':
                 "name": "DHT Humidity", "state_class": "measurement",
                 "unique_id":"new_dht_humidity", "object_id":"new_dht_humidity",
                 "unit_of_measurement": "%", "device_class": "humidity",
-                "state_topic": "homeassistant/sensor/new_dht_humidity/state",
+                "state_topic": MQTT_HUM_STATE,
                 "retain": "true"
                 }
+
+    logging.info("Publishing homeassistant data configuration to "+MQTT_TEMP_CONFIG+" and "+MQTT_HUM_CONFIG)
+
 
     while True:
         try:
             
-            client.publish("homeassistant/sensor/new_dht_temperature/config", json.dumps(temp_data_conf))
-            client.publish("homeassistant/sensor/new_dht_humidity/config", json.dumps(hum_data_conf))
+            client.publish(MQTT_TEMP_CONFIG, json.dumps(temp_data_conf))
+            client.publish(MQTT_HUM_CONFIG, json.dumps(hum_data_conf))
 
             humidity, temperature = adafruit_dht.read_retry(dht_sensor, SENSOR_PIN)
 
             if humidity is not None and temperature is not None:
 
                 logging.debug(f"Sensor values measured - temperature '{temperature}', humidity '{humidity}''")
-                temp_data = round((temperature+float(TEMP_DELTA)), DECIMAL_POINTS)
+                temp_data = round((temperature+TEMP_DELTA), DECIMAL_POINTS)
                 hum_data = round(humidity, DECIMAL_POINTS)
                 
                 logging.debug("Publishing data to topics")
-                client.publish("homeassistant/sensor/new_dht_temperature/state", temp_data)
-                client.publish("homeassistant/sensor/new_dht_humidity/state", hum_data)
+                client.publish(MQTT_TEMP_STATE, temp_data)
+                client.publish(MQTT_HUM_STATE, hum_data)
             else:
                 logging.error(f"Failed to read sensor values. Check you wiring and configuration. Retrying in {SENSOR_CHECK_INTERVAL}...")
 
