@@ -1,6 +1,6 @@
-# dht-mqtt-dockerized
+# dht-mqtt-dockerized for HomeAssistant
 A DHT22/DHT11 fully customisable python application running in a docker container to send temperature and humidty sensor values in a JSON format to a MQTT broker.
-The code can be found on [Github](https://github.com/grigal/dht-mqtt-dockerized) and on [Docker Hub](https://hub.docker.com/r/tomasgrigaliunas/dht-mqtt-dockerized).
+Initial code can be found on [Github](https://github.com/grigal/dht-mqtt-dockerized) and on [Docker Hub](https://hub.docker.com/r/tomasgrigaliunas/dht-mqtt-dockerized).
 
 ## Initial setup
 In terms of hardware, you'll need a DHT11 or DHT22 temperature/humidity sensor connected to a Raspberry Pi. Examples can be found online depending on your specific models, one I would suggest would be [this one](https://www.instructables.com/Raspberry-Pi-Tutorial-How-to-Use-the-DHT-22/).
